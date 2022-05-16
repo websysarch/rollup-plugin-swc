@@ -1,10 +1,11 @@
-import { addExtension } from '@rollup/pluginutils'
 import deepmerge from 'deepmerge'
 import fsp from 'fs/promises'
+import { parse } from 'jsonc-parser'
 import { join } from 'path'
 
 function fixPath(partialPath: string, isDirectory: boolean, ext: string) {
-  return addExtension(isDirectory ? join(partialPath, 'index') : partialPath, ext)
+  const filePath = isDirectory ? join(partialPath, 'index') : partialPath
+  return filePath.endsWith(ext) ? filePath : `${filePath}${ext}`
 }
 
 async function ensureFile(filePath: string): Promise<string> {
@@ -31,17 +32,21 @@ export async function resolveFilePath(fileOrFolderPath: string, extensions: stri
 
 export async function readJsonFile(filePath: string): Promise<Record<string, any>> {
   const content = await fsp.readFile(filePath, { encoding: 'utf-8' })
-  return JSON.parse(content)
+  return parse(content)
 }
 
 export async function readTsCompilerOptions(
   filePath: string | undefined,
   config: Record<string, any> = {},
 ): Promise<Record<string, any>> {
-  if (!filePath) return config
-  const baseConfig = await readJsonFile(filePath)
-  return readTsCompilerOptions(
-    baseConfig.extends,
-    deepmerge<Record<string, any>>(baseConfig.compilerOptions, config),
-  )
+  try {
+    if (!filePath) return config
+    const baseConfig = await readJsonFile(filePath)
+    return readTsCompilerOptions(
+      baseConfig.extends,
+      deepmerge<Record<string, any>>(baseConfig.compilerOptions, config),
+    )
+  } catch {
+    return {}
+  }
 }

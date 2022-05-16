@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "compilerOptions": {
+    "target": "es2021", // ES2021 is supported 100% by node 16
+    "moduleResolution": "node",
+    "sourceMap": false,
+    "strict": true,
+    "noImplicitReturns": true,
+    "noUnusedLocals": true,
+    "newLine": "lf",
+    "esModuleInterop": true
+  },
+  "include": ["src"]
+}

@@ -1,6 +1,6 @@
 {
   "name": "@websysarch/rollup-plugin-swc",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Rollup plugin to use SWC for javascript and typescript",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
